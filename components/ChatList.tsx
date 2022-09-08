@@ -39,12 +39,26 @@ const ChatList = (props) => {
         var allPeers2 = []
         if (db && walletStore.address !== "" && lucid) {
             console.log(walletStore.address)
+
             db.get('chat3')
                 .get(walletStore.address)
                 .map()
                 .once((data, index) => {
-                    allPeers2 = [...allPeers2, index]
-                    setAllPeers(allPeers2)
+                    if (!allPeers2.includes(index) && index.startsWith("addr")) {
+                        allPeers2.push(index)
+                        setAllPeers([... new Set(allPeers2)])
+                    }
+                })
+            db.get('chat3')
+                .map()
+                .once((data, index) => {
+                    console.log(data, index)
+                    Object.keys(data).map((key) => {
+                        if (!allPeers2.includes(key) && key.startsWith("addr")) {
+                            allPeers2.push(index)
+                            setAllPeers([... new Set(allPeers2)])
+                        }
+                    })
                 })
             console.log(walletStore.address)
             console.log("getting chat")
@@ -86,9 +100,9 @@ const ChatList = (props) => {
             <div className="input-group w-full my-5">
                 <input onChange={(e) => { setPeerAddress(e.target.value) }} type="text" placeholder="Search wallet..." className="input input-bordered w-full" value={peerAddress} />
                 <Link href={`?peer=${peerAddress}`}>
-                <button className="btn btn-square">
-                    Go 
-                </button>
+                    <button className="btn btn-square">
+                        Go
+                    </button>
                 </Link>
             </div>
         </>
