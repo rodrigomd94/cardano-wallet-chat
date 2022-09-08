@@ -78,7 +78,7 @@ const Chat = (props) => {
         var incomingMessages2 = []
         var allMessages2 = []
         if (db && walletStore.address !== "" && lucid && peerAddress !== "") {
-            
+
             db.get('chat3')
                 .get(walletStore.address)
                 .get(peerAddress)
@@ -87,7 +87,7 @@ const Chat = (props) => {
                     if (data) {
                         if (await verifyMessage(data, walletStore.address)) {
                             outgoingMessages2 = [...outgoingMessages2.slice(-6), data]
-                            allMessages2 = [...allMessages2.slice(-6), { data, origin: "outgoing" }]
+                            allMessages2 = [...allMessages2.slice(-6), { data, origin: "outgoing", timestamp: id }]
                             sortMessages(allMessages2)
                             console.log(allMessages2)
                             setAllMessages(sortMessages(allMessages2))
@@ -103,7 +103,7 @@ const Chat = (props) => {
                     if (data) {
                         if (await verifyMessage(data, peerAddress)) {
                             incomingMessages2 = [...incomingMessages2.slice(-6), data]
-                            allMessages2 = [...allMessages2.slice(-6), { data, origin: "incoming" }]
+                            allMessages2 = [...allMessages2.slice(-6), { data, origin: "incoming", timestamp: id }]
                             sortMessages(allMessages2)
                             console.log(allMessages2)
                             setAllMessages(sortMessages(allMessages2))
@@ -128,14 +128,14 @@ const Chat = (props) => {
 
     useEffect(() => {
         if (peer && (peer as string).startsWith("$")) {
-            queryHandle((peer as string).replace("$",""))
+            queryHandle((peer as string).replace("$", ""))
                 .then((address) => {
                     setPeerAddress(address)
                 })
-        } else if(peer){
+        } else if (peer) {
             setPeerAddress(peer as string)
         }
-     }, [peer])
+    }, [peer])
 
     const verifyMessage = (message: SignedMessage, address: string) => {
         const payload = utf8ToHex(message.message);
@@ -186,9 +186,19 @@ const Chat = (props) => {
 
                         {allMessages.map((message, index) => {
                             if (message.origin === "incoming") {
-                                return <div key={index} className="flex justify-left px-4 py-5 text-secondary">{message.data.message}</div>
+                                return <div key={index} className="mt-5" >
+                                    <div className="tooltip tooltip-right z-10" data-tip={message.timestamp}>
+                                        <div className="flex justify-left px-4 text-secondary" >{message.data.message}</div>
+                                    </div>
+                                </div>
                             } else if (message.origin === "outgoing") {
-                                return <div key={index} className="flex justify-end px-4 py-5 text-accent">{message.data.message}</div>
+                                return <div key={index} className="mt-5 flex justify-end" >
+                                    <div className="tooltip tooltip-left z-10" data-tip={message.timestamp}>
+                                        <div className="flex justify-end px-4 py-5 text-accent">{message.data.message}</div>
+                                    </div>
+                                </div>
+
+
                             }
                         }
                         )}
