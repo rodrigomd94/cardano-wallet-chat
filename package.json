@@ -11,11 +11,12 @@
   "dependencies": {
     "daisyui": "^2.25.0",
     "easy-peasy": "^5.0.4",
+    "gun": "^0.2020.1238",
     "install": "^0.13.0",
     "lucid-cardano": "^0.5.9",
     "next": "12.2.5",
-    "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
   },
   "devDependencies": {
     "@types/node": "18.7.15",

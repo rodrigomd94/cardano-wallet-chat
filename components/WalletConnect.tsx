@@ -2,13 +2,14 @@ import { Lucid, Blockfrost, utf8ToHex, C } from "lucid-cardano";
 import { useState, useEffect } from 'react';
 import { useStoreActions, useStoreState } from "../utils/store";
 
-
 const WalletConnect = () => {
     // const [availableWallets, setAvailableWallets] = useState<string[]>([])
     const walletStore = useStoreState(state => state.wallet)
     const setWallet = useStoreActions(actions => actions.setWallet)
     const availableWallets = useStoreState(state => state.availableWallets)
     const setAvailableWallets = useStoreActions(actions => actions.setAvailableWallets)
+    const lucidStore = useStoreState(state => state.lucid)
+    const setLucid = useStoreActions(actions => actions.setLucid)
 
     const [connectedAddress, setConnectedAddress] = useState("")
 
@@ -16,13 +17,15 @@ const WalletConnect = () => {
         const api = (await window.cardano[
             wallet.toLowerCase()
         ].enable())
-
+    
         const lucid = await Lucid.new(
             new Blockfrost('https://cardano-mainnet.blockfrost.io/api/v0', process.env.NEXT_PUBLIC_BLOCKFROST as string),
             'Mainnet')
         lucid.selectWallet(api)
+        setLucid(lucid)
         return lucid;
     }
+
 
     const walletConnected = async (wallet: string, connect: boolean = true) => {
         const addr = connect ? await (await initLucid(wallet)).wallet.address() : ''

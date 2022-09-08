@@ -6,6 +6,7 @@ import WalletConnect from '../components/WalletConnect'
 import { useStoreActions, useStoreState } from "../utils/store"
 
 import { useEffect } from 'react'
+import Chat from '../components/Chat'
 
 
 const Home: NextPage = () => {
@@ -46,9 +47,8 @@ const Home: NextPage = () => {
           <WalletConnect />
         </div>
       </div>
-      <main className={styles.main}>
         <div>{walletStore.address}</div>
-      </main>
+        <Chat />
     </div>
   )
 }
