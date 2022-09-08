@@ -8,8 +8,6 @@ const WalletConnect = () => {
     const setWallet = useStoreActions(actions => actions.setWallet)
     const availableWallets = useStoreState(state => state.availableWallets)
     const setAvailableWallets = useStoreActions(actions => actions.setAvailableWallets)
-    const lucidStore = useStoreState(state => state.lucid)
-    const setLucid = useStoreActions(actions => actions.setLucid)
 
     const [connectedAddress, setConnectedAddress] = useState("")
 
