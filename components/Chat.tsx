@@ -137,7 +137,7 @@ const Chat = (props) => {
         <>
             {peer && db &&
                 <>
-                    <div className="mockup-window p-10 border border-base-300" style={{ height: '80vh' }} >
+                    <div className="mockup-window p-10 border " style={{ height: '80vh' }} >
                         <div className="center font-bold">You : {walletStore.address}</div>
                         <div className="center font-bold secondary">Peer : {peer}</div>
 
@@ -147,7 +147,7 @@ const Chat = (props) => {
                             if (message.origin === "incoming") {
                                 return <div key={index} className="flex justify-left px-4 py-5 text-secondary">{message.data.message}</div>
                             } else if (message.origin === "outgoing") {
-                                return <div key={index} className="flex justify-end px-4 py-5 text-primary">{message.data.message}</div>
+                                return <div key={index} className="flex justify-end px-4 py-5 text-accent">{message.data.message}</div>
                             }
                         }
                         )}

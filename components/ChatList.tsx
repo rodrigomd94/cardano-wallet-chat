@@ -90,7 +90,7 @@ const ChatList = (props) => {
 
     return (
         <>
-            <div className="mockup-window p-10 border border-base-300 center" style={{ height: '80vh' }} >
+            <div className="mockup-window p-10 border center" style={{ height: '80vh' }} >
                 <div className="center font-bold">You : {walletStore.address}</div>
                 <div className="text-center font-bold">
                     <h2 className="bold m-10" >Your chats:</h2>
