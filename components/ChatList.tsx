@@ -54,7 +54,7 @@ const ChatList = (props) => {
                 .once((data, index) => {
                     console.log(data, index)
                     Object.keys(data).map((key) => {
-                        if (!allPeers2.includes(key) && key.startsWith("addr")) {
+                        if (!allPeers2.includes(key) && key === walletStore.address) {
                             allPeers2.push(index)
                             setAllPeers([... new Set(allPeers2)])
                         }
