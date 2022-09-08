@@ -168,7 +168,7 @@ const Chat = (props) => {
                 console.log(walletStore.address)
                 db.get('chat3')
                     .get(walletStore.address)
-                    .get(peer)
+                    .get(peerAddress)
                     .get(index)
                     .put(signedMessage)
                 setCurrentMessage("")
