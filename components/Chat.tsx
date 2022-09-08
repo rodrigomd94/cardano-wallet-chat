@@ -8,7 +8,6 @@ import GUN from 'gun'
 const Chat = (props) => {
     const router = useRouter()
     const {peer} = router.query
-    console.log("peer", peer)
     interface SignedMessage {
         key: string
         signature: string
@@ -67,7 +66,7 @@ const Chat = (props) => {
                 })
 
         } else if (walletStore.address !== "") {
-            setDb(GUN())
+            setDb(GUN(["https://gun-server-1.glitch.me/gun"]))
         }
     }, [db, walletStore.address, props])
 
@@ -120,11 +119,11 @@ const Chat = (props) => {
 
                 {/* {outgoingMessages.map((message) => <div className="flex justify-right px-4 py-5">{message.message}</div>)} */}
 
-                {allMessages.map((message) => {
+                {allMessages.map((message, index) => {
                     if (message.origin === "incoming") {
-                        return <div className="flex justify-left px-4 py-5">{message.data.message}</div>
+                        return <div key={index} className="flex justify-left px-4 py-5">{message.data.message}</div>
                     } else if(message.origin === "outgoing") {
-                        return <div className="flex justify-end px-4 py-5">{message.data.message}</div>
+                        return <div key={index} className="flex justify-end px-4 py-5">{message.data.message}</div>
                     }
                 }
                 )}
