@@ -101,7 +101,7 @@ const Chat = (props) => {
                 .map()
                 .once(async (data, id) => {
                     if (data) {
-                        if (await verifyMessage(data, peer as string)) {
+                        if (await verifyMessage(data, peerAddress)) {
                             incomingMessages2 = [...incomingMessages2.slice(-6), data]
                             allMessages2 = [...allMessages2.slice(-6), { data, origin: "incoming" }]
                             sortMessages(allMessages2)
