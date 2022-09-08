@@ -8,7 +8,7 @@ import GUN from 'gun'
 const Chat = (props) => {
     const router = useRouter()
     const {peer} = router.query
-
+    console.log("peer", peer)
     interface SignedMessage {
         key: string
         signature: string
@@ -56,7 +56,7 @@ const Chat = (props) => {
                 .on(async (data, id) => {
                     console.log(data)
                     if (data) {
-                        if (await verifyMessage(data, peer)) {
+                        if (await verifyMessage(data, peer as string)) {
                             incomingMessages2 = [...incomingMessages2.slice(-40), data]
                             allMessages2 = [...allMessages2.slice(-40), { data, origin: "incoming" }]
                             sortMessages(allMessages2)
