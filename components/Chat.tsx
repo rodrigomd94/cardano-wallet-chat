@@ -84,10 +84,10 @@ const Chat = (props) => {
                     }
                 })
 
-        } else if (walletStore.address !== "" && lucid && peer) {
+        } else if (lucid && peer) {
             setDb(GUN(["https://gun-server-1.glitch.me/gun"]))
         }
-    }, [db, walletStore.address])
+    }, [db, walletStore.address, lucid, peer])
 
     useEffect(() => {
         if (walletStore.name !== "") {
