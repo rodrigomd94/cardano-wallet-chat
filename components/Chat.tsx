@@ -120,6 +120,8 @@ const Chat = (props) => {
     useEffect(() => {
         if (walletStore.name !== "") {
             initLucid(walletStore.name)
+            setAllMessages([])
+
         }
 
     }, [walletStore.name])

@@ -70,6 +70,7 @@ const ChatList = (props) => {
     useEffect(() => {
         if (walletStore.name !== "") {
             initLucid(walletStore.name)
+            setAllPeers([])
         }
 
     }, [walletStore.address])
