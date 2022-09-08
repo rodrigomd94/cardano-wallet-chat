@@ -98,7 +98,7 @@ const ChatList = (props) => {
                 {allPeers.map((peer, index) => <div key={index}><a href={`/?peer=${peer}`} className="link text-ellipsis">{peer}</a></div>)}
             </div>
             <div className="input-group w-full my-5">
-                <input onChange={(e) => { setPeerAddress(e.target.value) }} type="text" placeholder="Search wallet..." className="input input-bordered w-full" value={peerAddress} />
+                <input onChange={(e) => { setPeerAddress(e.target.value) }} type="text" placeholder="Search wallet or handle..." className="input input-bordered w-full" value={peerAddress} />
                 <Link href={`?peer=${peerAddress}`}>
                     <button className="btn btn-square">
                         Go
