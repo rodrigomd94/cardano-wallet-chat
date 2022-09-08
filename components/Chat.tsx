@@ -22,13 +22,32 @@ const Chat = (props) => {
     const [allMessages, setAllMessages] = useState([])
 
     const [currentMessage, setCurrentMessage] = useState("")
-    const lucid = useStoreState(state => state.lucid)
+    const [lucid, setLucid] = useState(undefined)
+
+    const initLucid = async (wallet: string) => {
+        const api = (await window.cardano[
+            wallet.toLowerCase()
+        ].enable())
+    
+        const lucid = await Lucid.new(
+            new Blockfrost('https://cardano-mainnet.blockfrost.io/api/v0', process.env.NEXT_PUBLIC_BLOCKFROST as string),
+            'Mainnet')
+        lucid.selectWallet(api)
+        setLucid(lucid)
+        return lucid;
+    }
 
     useEffect(() => {
         var outgoingMessages2 = []
         var incomingMessages2 = []
         var allMessages2 = []
-        if (db && walletStore.address !== "") {
+        if (db && walletStore.address !== "" && lucid) {
+            db.get('chat3')
+                .get(walletStore.address)
+                .map()
+                .once((data, index) => {
+                    console.log(data, index)
+                })
             console.log(walletStore.address)
             console.log("getting chat")
             db.get('chat3')
@@ -64,10 +83,17 @@ const Chat = (props) => {
                     }
                 })
 
-        } else if (walletStore.address !== "") {
+        } else if (walletStore.address !== "" && lucid) {
             setDb(GUN(["https://gun-server-1.glitch.me/gun"]))
         }
     }, [db, walletStore.address, props])
+
+    useEffect(() => {
+        if(walletStore.name !== ""){
+            initLucid(walletStore.name)
+        }
+
+    }, [walletStore.name])
 
     const verifyMessage = (message: SignedMessage, address: string) => {
         const payload = utf8ToHex(message.message);

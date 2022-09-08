@@ -22,10 +22,19 @@ const WalletConnect = () => {
             new Blockfrost('https://cardano-mainnet.blockfrost.io/api/v0', process.env.NEXT_PUBLIC_BLOCKFROST as string),
             'Mainnet')
         lucid.selectWallet(api)
-        setLucid(lucid)
+        //setLucid(lucid)
         return lucid;
     }
-
+    
+    const loadWalletSession = async () => {
+        if (walletStore.connected &&
+            walletStore.name &&
+            window.cardano &&
+            (await window.cardano[walletStore.name.toLowerCase()].enable())
+        ) {
+            walletConnected(walletStore.name)
+        }
+    }
 
     const walletConnected = async (wallet: string, connect: boolean = true) => {
         const addr = connect ? await (await initLucid(wallet)).wallet.address() : ''
@@ -55,6 +64,7 @@ const WalletConnect = () => {
             if (window.cardano.nami) wallets.push('Nami')
             if (window.cardano.eternl) wallets.push('Eternl')
             if (window.cardano.flint) wallets.push('Flint')
+            loadWalletSession()
         }
         setAvailableWallets(wallets)
     }, [])
