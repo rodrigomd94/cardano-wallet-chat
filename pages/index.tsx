@@ -7,6 +7,7 @@ import { useStoreActions, useStoreState } from "../utils/store"
 
 import { useEffect } from 'react'
 import Chat from '../components/Chat'
+import Link from 'next/link'
 
 
 const Home: NextPage = () => {
@@ -41,7 +42,7 @@ const Home: NextPage = () => {
       </Head>
       <div className="navbar bg-base-100">
         <div className="flex-1">
-          <a href="/" className="btn btn-ghost normal-case text-xl">Cardano</a>
+          <Link href="/" className="btn btn-ghost normal-case text-xl">Cardano</Link>
         </div>
         <div className="flex-none">
           <WalletConnect />

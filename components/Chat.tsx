@@ -42,7 +42,7 @@ const Chat = (props) => {
         var outgoingMessages2 = []
         var incomingMessages2 = []
         var allMessages2 = []
-        if (db && walletStore.address !== "" && lucid) {
+        if (db && walletStore.address !== "" && lucid && peer) {
             db.get('chat3')
                 .get(walletStore.address)
                 .map()
@@ -84,10 +84,10 @@ const Chat = (props) => {
                     }
                 })
 
-        } else if (walletStore.address !== "" && lucid) {
+        } else if (walletStore.address !== "" && lucid && peer) {
             setDb(GUN(["https://gun-server-1.glitch.me/gun"]))
         }
-    }, [db, walletStore.address, props])
+    }, [db, walletStore.address])
 
     useEffect(() => {
         if (walletStore.name !== "") {
@@ -162,16 +162,12 @@ const Chat = (props) => {
                     </div>
                 </>
             }
-            {!peer && db &&
+            {!peer &&
                 <ChatList />
             }
             {
-                !db && <div>Loading ...</div>
+                !db && peer && <div>Loading ...</div>
             }
-
-
-
-
         </>
     )
 

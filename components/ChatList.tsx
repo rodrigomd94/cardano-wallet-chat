@@ -2,6 +2,7 @@ import { Lucid, Blockfrost, utf8ToHex, C } from "lucid-cardano";
 import { useState, useEffect, useRef } from 'react';
 import { useStoreActions, useStoreState } from "../utils/store";
 import { useRouter } from 'next/router'
+import Link from "next/link";
 
 import GUN from 'gun'
 
@@ -37,6 +38,7 @@ const ChatList = (props) => {
     useEffect(() => {
         var allPeers2 = []
         if (db && walletStore.address !== "" && lucid) {
+            console.log(walletStore.address)
             db.get('chat3')
                 .get(walletStore.address)
                 .map()
@@ -46,17 +48,17 @@ const ChatList = (props) => {
                 })
             console.log(walletStore.address)
             console.log("getting chat")
-        } else if (walletStore.address !== "" && lucid) {
+        } else if (lucid) {
             setDb(GUN(["https://gun-server-1.glitch.me/gun"]))
         }
-    }, [db, walletStore.address, props])
+    }, [db, walletStore.address, lucid])
 
     useEffect(() => {
         if (walletStore.name !== "") {
             initLucid(walletStore.name)
         }
 
-    }, [walletStore.name])
+    }, [walletStore.address])
 
     const verifyMessage = (message: SignedMessage, address: string) => {
         const payload = utf8ToHex(message.message);
@@ -83,11 +85,11 @@ const ChatList = (props) => {
             </div>
             <div className="input-group w-full my-5">
                 <input onChange={(e) => { setPeerAddress(e.target.value) }} type="text" placeholder="Search wallet..." className="input input-bordered w-full" value={peerAddress} />
-                <a href={`?peer=${peerAddress}`}>
+                <Link href={`?peer=${peerAddress}`}>
                 <button className="btn btn-square">
                     Go 
                 </button>
-                </a>
+                </Link>
             </div>
         </>
     )
