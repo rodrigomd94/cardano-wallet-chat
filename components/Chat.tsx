@@ -24,6 +24,7 @@ const Chat = (props) => {
 
     const [currentMessage, setCurrentMessage] = useState("")
     const [lucid, setLucid] = useState(undefined)
+    const [peerAddress, setPeerAddress] = useState("")
 
     const initLucid = async (wallet: string) => {
         const api = (await window.cardano[
@@ -38,11 +39,44 @@ const Chat = (props) => {
         return lucid;
     }
 
+
+    const queryHandle = async (handleName: string) => {
+        const policyID = 'f0ff48bbb7bbe9d59a40f1ce90e9e9d0ff5002ec48f232b49ca0fb9a';
+        // A blank Handle name should always be ignored.
+        if (handleName.length === 0) {
+            // Handle error.
+        }
+        // Convert handleName to hex encoding.
+        const assetName = Buffer.from(handleName).toString('hex');
+
+        // Fetch matching address for the asset.
+        const data = await fetch(
+            `https://cardano-mainnet.blockfrost.io/api/v0/assets/${policyID}${assetName}/addresses`,
+            {
+                headers: {
+                    // Your Blockfrost API key
+                    project_id: process.env.NEXT_PUBLIC_BLOCKFROST,
+                    'Content-Type': 'application/json'
+                }
+            }
+        ).then(res => res.json());
+
+        if (data?.error) {
+            // Handle error.
+            console.log("handle error")
+        }
+
+        const [{ address }] = data;
+        console.log(address)
+        return (address)
+    }
+
+
     useEffect(() => {
         var outgoingMessages2 = []
         var incomingMessages2 = []
         var allMessages2 = []
-        if (db && walletStore.address !== "" && lucid && peer) {
+        if (db && walletStore.address !== "" && lucid && peerAddress !== "") {
             db.get('chat3')
                 .get(walletStore.address)
                 .map()
@@ -53,7 +87,7 @@ const Chat = (props) => {
             console.log("getting chat")
             db.get('chat3')
                 .get(walletStore.address)
-                .get(peer)
+                .get(peerAddress)
                 .map()
                 .once(async (data, id) => {
                     if (data) {
@@ -68,7 +102,7 @@ const Chat = (props) => {
                     }
                 })
             db.get('chat3')
-                .get(peer)
+                .get(peerAddress)
                 .get(walletStore.address)
                 .map()
                 .once(async (data, id) => {
@@ -87,7 +121,7 @@ const Chat = (props) => {
         } else if (lucid && peer) {
             setDb(GUN(["https://gun-server-1.glitch.me/gun"]))
         }
-    }, [db, walletStore.address, lucid, peer])
+    }, [db, walletStore.address, lucid, peerAddress])
 
     useEffect(() => {
         if (walletStore.name !== "") {
@@ -95,6 +129,17 @@ const Chat = (props) => {
         }
 
     }, [walletStore.name])
+
+    useEffect(() => {
+        if (peer && (peer as string).startsWith("$")) {
+            queryHandle((peer as string).replace("$",""))
+                .then((address) => {
+                    setPeerAddress(address)
+                })
+        } else if(peer){
+            setPeerAddress(peer as string)
+        }
+     }, [peer])
 
     const verifyMessage = (message: SignedMessage, address: string) => {
         const payload = utf8ToHex(message.message);
