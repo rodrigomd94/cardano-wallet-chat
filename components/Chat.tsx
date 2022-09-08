@@ -2,12 +2,13 @@ import { Lucid, Blockfrost, utf8ToHex, C } from "lucid-cardano";
 import { useState, useEffect, useRef } from 'react';
 import { useStoreActions, useStoreState } from "../utils/store";
 import { useRouter } from 'next/router'
+import ChatList from "./ChatList";
 
 import GUN from 'gun'
 
 const Chat = (props) => {
     const router = useRouter()
-    const {peer} = router.query
+    const { peer } = router.query
     interface SignedMessage {
         key: string
         signature: string
@@ -28,7 +29,7 @@ const Chat = (props) => {
         const api = (await window.cardano[
             wallet.toLowerCase()
         ].enable())
-    
+
         const lucid = await Lucid.new(
             new Blockfrost('https://cardano-mainnet.blockfrost.io/api/v0', process.env.NEXT_PUBLIC_BLOCKFROST as string),
             'Mainnet')
@@ -56,7 +57,7 @@ const Chat = (props) => {
                 .map()
                 .once(async (data, id) => {
                     if (data) {
-                        if (await verifyMessage(data, walletStore.address)) {   
+                        if (await verifyMessage(data, walletStore.address)) {
                             outgoingMessages2 = [...outgoingMessages2.slice(-6), data]
                             allMessages2 = [...allMessages2.slice(-6), { data, origin: "outgoing" }]
                             sortMessages(allMessages2)
@@ -89,7 +90,7 @@ const Chat = (props) => {
     }, [db, walletStore.address, props])
 
     useEffect(() => {
-        if(walletStore.name !== ""){
+        if (walletStore.name !== "") {
             initLucid(walletStore.name)
         }
 
@@ -134,31 +135,41 @@ const Chat = (props) => {
 
     return (
         <>
+            {peer && db &&
+                <>
+                    <div className="mockup-window p-10 border border-base-300" style={{ height: '80vh' }} >
+                        <div className="center font-bold">You : {walletStore.address}</div>
+                        <div className="center font-bold secondary">Peer : {peer}</div>
 
-            <div className="mockup-window p-10 border border-base-300" style={{ height: '80vh' }} >
-            <div className="center">you : {walletStore.address}</div>
-                <div className="center">peer : {peer}</div>
+                        {/* {outgoingMessages.map((message) => <div className="flex justify-right px-4 py-5">{message.message}</div>)} */}
 
-                {/* {outgoingMessages.map((message) => <div className="flex justify-right px-4 py-5">{message.message}</div>)} */}
+                        {allMessages.map((message, index) => {
+                            if (message.origin === "incoming") {
+                                return <div key={index} className="flex justify-left px-4 py-5 text-secondary">{message.data.message}</div>
+                            } else if (message.origin === "outgoing") {
+                                return <div key={index} className="flex justify-end px-4 py-5 text-primary">{message.data.message}</div>
+                            }
+                        }
+                        )}
 
-                {allMessages.map((message, index) => {
-                    if (message.origin === "incoming") {
-                        return <div key={index} className="flex justify-left px-4 py-5">{message.data.message}</div>
-                    } else if(message.origin === "outgoing") {
-                        return <div key={index} className="flex justify-end px-4 py-5">{message.data.message}</div>
-                    }
-                }
-                )}
 
-                <div className="form-control mb-10 absolute bottom-10 w-1/2">
-                    <div className="input-group w-full">
+                    </div>
+                    <div className="input-group w-full my-5">
                         <input onChange={(e) => { setCurrentMessage(e.target.value) }} type="text" placeholder="Enter message..." className="input input-bordered w-full" value={currentMessage} />
                         <button className="btn btn-square" onClick={() => { sendMessage() }}>
                             Send
                         </button>
                     </div>
-                </div>
-            </div>
+                </>
+            }
+            {!peer && db &&
+                <ChatList />
+            }
+            {
+                !db && <div>Loading ...</div>
+            }
+
+
 
 
         </>
