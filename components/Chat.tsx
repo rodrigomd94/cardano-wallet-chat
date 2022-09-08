@@ -35,12 +35,11 @@ const Chat = (props) => {
                 .get(walletStore.address)
                 .get(peer)
                 .map()
-                .on(async (data, id) => {
-                    console.log(data)
+                .once(async (data, id) => {
                     if (data) {
                         if (await verifyMessage(data, walletStore.address)) {   
-                            outgoingMessages2 = [...outgoingMessages2.slice(-40), data]
-                            allMessages2 = [...allMessages2.slice(-40), { data, origin: "outgoing" }]
+                            outgoingMessages2 = [...outgoingMessages2.slice(-6), data]
+                            allMessages2 = [...allMessages2.slice(-6), { data, origin: "outgoing" }]
                             sortMessages(allMessages2)
                             console.log(allMessages2)
                             setAllMessages(sortMessages(allMessages2))
@@ -52,13 +51,13 @@ const Chat = (props) => {
                 .get(peer)
                 .get(walletStore.address)
                 .map()
-                .on(async (data, id) => {
-                    console.log(data)
+                .once(async (data, id) => {
                     if (data) {
                         if (await verifyMessage(data, peer as string)) {
-                            incomingMessages2 = [...incomingMessages2.slice(-40), data]
-                            allMessages2 = [...allMessages2.slice(-40), { data, origin: "incoming" }]
+                            incomingMessages2 = [...incomingMessages2.slice(-6), data]
+                            allMessages2 = [...allMessages2.slice(-6), { data, origin: "incoming" }]
                             sortMessages(allMessages2)
+                            console.log(allMessages2)
                             setAllMessages(sortMessages(allMessages2))
                             setIncomingMessages(incomingMessages2)
                         }
@@ -73,9 +72,6 @@ const Chat = (props) => {
     const verifyMessage = (message: SignedMessage, address: string) => {
         const payload = utf8ToHex(message.message);
         const hasSigned: boolean = lucid.verifyMessage(address, payload, { key: message.key, signature: message.signature })
-        if(!hasSigned){
-            console.log(hasSigned, payload)
-        }
         return hasSigned
     }
 
