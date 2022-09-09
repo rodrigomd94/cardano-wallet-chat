@@ -78,6 +78,7 @@ const Chat = (props) => {
         var incomingMessages2 = []
         var allMessages2 = []
         if (db && walletStore.address !== "" && lucid && peerAddress !== "") {
+            console.log("here", peerAddress)
 
             db.get('chat3')
                 .get(walletStore.address)
@@ -121,12 +122,12 @@ const Chat = (props) => {
         if (walletStore.name !== "") {
             initLucid(walletStore.name)
             setAllMessages([])
-
         }
 
     }, [walletStore.name])
 
     useEffect(() => {
+        setAllMessages([])
         if (peer && (peer as string).startsWith("$")) {
             queryHandle((peer as string).replace("$", ""))
                 .then((address) => {
