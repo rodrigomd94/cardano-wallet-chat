@@ -107,7 +107,7 @@ const Chat = (props) => {
                 })
         } else if (peer) {
             setPeerAddress(peer as string)
-            handleFromAddress(peer)
+            handleFromAddress(peer as string)
             .then((handlesRes) =>{
                 setHandles(handlesRes)
             })
