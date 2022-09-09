@@ -3,12 +3,12 @@ import { useState, useEffect, useRef } from 'react';
 import { useStoreActions, useStoreState } from "../utils/store";
 import { useRouter } from 'next/router'
 import Link from "next/link";
+import { handleFromAddress } from "../utils/handles";
 
 import GUN from 'gun'
 
 const ChatList = (props) => {
     const router = useRouter()
-    const { peer } = router.query
     interface SignedMessage {
         key: string
         signature: string
@@ -41,27 +41,37 @@ const ChatList = (props) => {
             console.log(walletStore.address)
 
             db.get('chat3')
-                .get(walletStore.address)
                 .map()
-                .once((data, index) => {
-                    if (!allPeers2.includes(index) && index.startsWith("addr")) {
-                        allPeers2.push(index)
-                        setAllPeers([... new Set(allPeers2)])
-                    }
-                })
-            db.get('chat3')
-                .map()
-                .once((data, index) => {
+                .once(async (data, index) => {
                     console.log(data, index)
+
                     Object.keys(data).map((key) => {
-                        if (!allPeers2.includes(key) && key === walletStore.address) {
-                            allPeers2.push(index)
-                            setAllPeers([... new Set(allPeers2)])
+                        if (index === walletStore.address && key.startsWith("addr")) {
+                            handleFromAddress(key)
+                                .then((handles: string[]) => {
+                                    if (handles.length > 0) {
+                                        allPeers2.push({ address: key, handles: handles.join(" / ") })
+                                    } else {
+                                        allPeers2.push({ address: key, handles: "" })
+                                    }
+                                    let uniqueObjArray = [...new Map(allPeers2.map((item) => [item["address"], item])).values()];
+                                    setAllPeers(uniqueObjArray)
+                                })
+                        }
+                        else if (key === walletStore.address) {
+                            handleFromAddress(index)
+                                .then((handles: string[]) => {
+                                    if (handles.length > 0) {
+                                        allPeers2.push({ address: index, handles: handles.join(" / ") })
+                                    } else {
+                                        allPeers2.push({ address: index, handles: "" })
+                                    }
+                                    let uniqueObjArray = [...new Map(allPeers2.map((item) => [item["address"], item])).values()];
+                                    setAllPeers(uniqueObjArray)
+                                })
                         }
                     })
                 })
-            console.log(walletStore.address)
-            console.log("getting chat")
         } else if (lucid) {
             setDb(GUN(["https://gun-server-1.glitch.me/gun"]))
         }
@@ -96,7 +106,10 @@ const ChatList = (props) => {
                 <div className="text-center font-bold">
                     <h2 className="bold m-10" >Your chats:</h2>
                 </div>
-                {allPeers.map((peer, index) => <div key={index}><a href={`/?peer=${peer}`} className="link text-ellipsis">{peer}</a></div>)}
+                <ul className="list-disc">
+                    {allPeers.map((peer, index) => <li key={index}><a href={`/?peer=${peer.address}`} className="link text-ellipsis">{peer.handles === "" ? peer.address : peer.handles}</a></li>)}
+
+                </ul>
             </div>
             <div className="input-group w-full my-5">
                 <input onChange={(e) => { setPeerAddress(e.target.value) }} type="text" placeholder="Search wallet or handle..." className="input input-bordered w-full" value={peerAddress} />

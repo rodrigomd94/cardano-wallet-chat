@@ -3,6 +3,7 @@ import { useState, useEffect, useRef } from 'react';
 import { useStoreActions, useStoreState } from "../utils/store";
 import { useRouter } from 'next/router'
 import ChatList from "./ChatList";
+import { queryHandle, handleFromAddress } from "../utils/handles";
 
 import GUN from 'gun'
 
@@ -25,6 +26,7 @@ const Chat = (props) => {
     const [currentMessage, setCurrentMessage] = useState("")
     const [lucid, setLucid] = useState(undefined)
     const [peerAddress, setPeerAddress] = useState("")
+    const [handles, setHandles] = useState([])
 
     const initLucid = async (wallet: string) => {
         const api = (await window.cardano[
@@ -40,37 +42,7 @@ const Chat = (props) => {
     }
 
 
-    const queryHandle = async (handleName: string) => {
-
-        const policyID = 'f0ff48bbb7bbe9d59a40f1ce90e9e9d0ff5002ec48f232b49ca0fb9a';
-        // A blank Handle name should always be ignored.
-        if (handleName.length === 0) {
-            // Handle error.
-        }
-        // Convert handleName to hex encoding.
-        const assetName = Buffer.from(handleName.toLowerCase()).toString('hex');
-
-        // Fetch matching address for the asset.
-        const data = await fetch(
-            `https://cardano-mainnet.blockfrost.io/api/v0/assets/${policyID}${assetName}/addresses`,
-            {
-                headers: {
-                    // Your Blockfrost API key
-                    project_id: process.env.NEXT_PUBLIC_BLOCKFROST,
-                    'Content-Type': 'application/json'
-                }
-            }
-        ).then(res => res.json());
-
-        if (data?.error) {
-            // Handle error.
-            console.log("handle error")
-        }
-
-        const [{ address }] = data;
-        console.log(address)
-        return (address)
-    }
+    
 
 
     useEffect(() => {
@@ -126,6 +98,8 @@ const Chat = (props) => {
 
     useEffect(() => {
         setAllMessages([])
+        handleFromAddress(walletStore.address)
+
         if (peer && (peer as string).startsWith("$")) {
             queryHandle((peer as string).replace("$", ""))
                 .then((address) => {
@@ -133,6 +107,10 @@ const Chat = (props) => {
                 })
         } else if (peer) {
             setPeerAddress(peer as string)
+            handleFromAddress(peer)
+            .then((handlesRes) =>{
+                setHandles(handlesRes)
+            })
         }
     }, [peer])
 
@@ -179,7 +157,7 @@ const Chat = (props) => {
                 <>
                     <div className="mockup-window p-10 border " style={{ height: '80vh' }} >
                         <div className="center font-bold">You : {walletStore.address}</div>
-                        <div className="center font-bold secondary">Peer : {peer}</div>
+                        <div className="center font-bold secondary">Peer : {handles.length === 0 ? peer : handles.join(' / ') }</div>
 
                         {/* {outgoingMessages.map((message) => <div className="flex justify-right px-4 py-5">{message.message}</div>)} */}
 
