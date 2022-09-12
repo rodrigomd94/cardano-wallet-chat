@@ -9,7 +9,7 @@ import GUN from 'gun'
 
 
 
-const TradeModal = (props) => {
+const OfferModal = (props) => {
     interface SignedMessage {
         key: string
         signature: string
@@ -125,4 +125,4 @@ const TradeModal = (props) => {
 
 }
 
-export default TradeModal;
+export default OfferModal;

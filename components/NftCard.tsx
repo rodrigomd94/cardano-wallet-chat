@@ -32,7 +32,7 @@ const NftCard = (props) => {
     }
     return (
         <>
-            <div className="card w-76 bg-base-300 shadow-xl z-10 m-5">
+            <div className="card w-76 bg-base-300 shadow-xl m-5">
                 <figure className="px-10 pt-10">
                     <img src={image} alt="Shoes" className="rounded-xl" />
                 </figure>

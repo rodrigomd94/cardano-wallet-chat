@@ -4,7 +4,6 @@ import { useStoreActions, useStoreState } from "../utils/store";
 import { useRouter } from 'next/router'
 import ChatList from "./ChatList";
 import { queryHandle, handleFromAddress } from "../utils/handles";
-
 import GUN from 'gun'
 import TradeModal from "./TradeModal";
 import { TransactionHash, Vkeywitness, VRFKeyHash } from "lucid-cardano/types/src/core/wasm_modules/cardano_multiplatform_lib_web/cardano_multiplatform_lib";
@@ -121,19 +120,16 @@ const Chat = (props) => {
     }, [peer])
 
     const verifyMessage = async (message: SignedMessage, address: string) => {
+
         if (message.tx) {
+            console.log("Transaction")
             const transaction = C.Transaction.from_bytes(Buffer.from(message.message, 'hex'));
-            let vkey = JSON.parse(transaction.witness_set().to_json()).vkeys.vkey
-            let signature = JSON.parse(transaction.witness_set().to_json()).vkeys[0].signature
-            vkey
-            const { paymentCredential } = lucid.utils.getAddressDetails(
-                peerAddress
-              );
-              console.log(paymentCredential)
-            console.log(transaction.to_json())
-            const hasSigned: boolean = lucid.verifyMessage(address, Buffer.from(message.unsignedTx ? message.unsignedTx : "", 'ascii').toString("hex"), { key: vkey, signature: signature })
-            console.log(message.unsignedTx, hasSigned)
-            return true
+            let vkey = JSON.parse(transaction.witness_set().to_json()).vkeys[0].vkey
+            const pubkeyHash =  C.PublicKey.from_bech32(vkey).hash().to_hex()
+            const addrKeyHash = C.Address.from_bech32(address).as_base().payment_cred().to_keyhash().to_hex()
+            const isValid = pubkeyHash === addrKeyHash
+            console.log("isValid", isValid)
+            return isValid
 
         } else {
             const payload = utf8ToHex(message.message);
