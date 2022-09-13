@@ -29,7 +29,7 @@ const TradeModal = (props) => {
     const [lucid, setLucid] = useState(undefined)
     const [ownNfts, setOwnNfts] = useState([])
     const [peerNfts, setPeerNfts] = useState([])
-    const [selectedTab, setSelectedTab] = useState("peer")
+    const [selectedTab, setSelectedTab] = useState("own")
     const [adaOffer, setAdaOffer] = useState(0)
 
 
@@ -66,21 +66,19 @@ const TradeModal = (props) => {
             .payToAddress(peerAddressInfo.address, { ...formatAssets(selectedSelfAssets), 'lovelace': BigInt(Number(adaOffer) * 1000000) })
         // .complete();
 
-
-        //adding outputs to receive from the peer
-        const output = C.TransactionOutput.new(
-            C.Address.from_bech32(walletStore.address),
-            assetsToValue({ ...formatAssets(selectedPeerAssets), 'lovelace': BigInt(1900000) }),
-        );
-
         const utxosSelf = await tx.lucid.wallet.getUtxosCore();
         var utxosPeer = await lucid.utxosAt(peerAddressInfo.address);
         const corePeerUtxos = C.TransactionUnspentOutputs.new();
         utxosPeer.forEach((utxo) => {
             corePeerUtxos.add(utxoToCore(utxo));
         });
-
+        
         tx.txBuilder.add_inputs_from(utxosSelf, C.Address.from_bech32(walletStore.address));
+         //adding outputs to receive from the peer
+         const output = C.TransactionOutput.new(
+            C.Address.from_bech32(walletStore.address),
+            assetsToValue({ ...formatAssets(selectedPeerAssets) }),
+        );
         tx.txBuilder.add_output(output)
         tx.txBuilder.add_inputs_from(corePeerUtxos, C.Address.from_bech32(peerAddressInfo.address));
 
