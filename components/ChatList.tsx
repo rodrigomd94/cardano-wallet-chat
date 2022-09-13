@@ -73,7 +73,7 @@ const ChatList = (props) => {
                     })
                 })
         } else if (lucid) {
-            setDb(GUN(["https://gun-server-1.glitch.me/gun"]))
+            setDb(GUN(["https://gun-server-1.glitch.me/gun", "http://5.189.177.177:8765/gun"]))
         }
     }, [db, walletStore.address, lucid])
 

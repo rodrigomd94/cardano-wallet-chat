@@ -90,7 +90,7 @@ const TradeModal = (props) => {
 
                 tx.txBuilder.add_inputs_from(corePeerUtxos, C.Address.from_bech32(peerAddressInfo.address));
                 console.log("inpiuts added")
-
+ 
                 tx.txBuilder.balance(C.Address.from_bech32(peerAddressInfo.address))
             }
 
@@ -123,7 +123,7 @@ const TradeModal = (props) => {
 
     useEffect(() => {
         if (lucid) {
-            setDb(GUN(["https://gun-server-1.glitch.me/gun"]))
+            setDb(GUN(["https://gun-server-1.glitch.me/gun","http://5.189.177.177:8765/gun"]))
         }
     }, [lucid])
 
