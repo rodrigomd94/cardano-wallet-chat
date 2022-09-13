@@ -92,7 +92,7 @@ const Chat = (props) => {
                 })
 
         } else if (lucid && peer) {
-            setDb(GUN(["https://gun-server-1.glitch.me/gun"]))
+            setDb(GUN(["https://gun-server-1.glitch.me/gun", "http://5.189.177.177:8765/gun"]))
         }
     }, [db, walletStore.address, lucid, peerAddress])
 
@@ -131,6 +131,8 @@ const Chat = (props) => {
                 const pubkeyHash = C.PublicKey.from_bech32(vkey).hash().to_hex()
                 const addrKeyHash = C.Address.from_bech32(address).as_base().payment_cred().to_keyhash().to_hex()
                 isValid = pubkeyHash === addrKeyHash
+               // console.log(isValid, JSON.parse(transaction.witness_set().to_json()))
+
             } catch (err) {
                 isValid = false
                 // console.log(err)
