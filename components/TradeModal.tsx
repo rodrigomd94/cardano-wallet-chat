@@ -123,7 +123,7 @@ const TradeModal = (props) => {
 
     useEffect(() => {
         if (lucid) {
-            setDb(GUN(["https://gun-server-1.glitch.me/gun","http://5.189.177.177:8765/gun"]))
+            setDb(GUN(["https://adao-gunjs1.herokuapp.com/gun","http://5.189.177.177:8765/gun"]))
         }
     }, [lucid])
 
