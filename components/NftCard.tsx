@@ -14,6 +14,7 @@ const NftCard = (props) => {
 
     const [selected, setSelected] = useState(((selectedSelfAssets.filter((asset) => asset.assetId === props.meta.assetId).length > 0) || (selectedPeerAssets.filter((asset) => asset.assetId === props.meta.assetId).length > 0) )? true : false)
     const selectAsset = () => {
+        console.log(selectedPeerAssets)
         if (selected) {
             if (props.type === "own") {
                 setSelectedSelfAssets(selectedSelfAssets.filter((asset) => asset.meta.assetId != props.meta.assetId))
