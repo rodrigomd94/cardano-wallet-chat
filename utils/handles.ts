@@ -40,34 +40,35 @@ export const handleFromAddress = async (address: string) => {
     //const assetName = Buffer.from(handleName.toLowerCase()).toString('hex');
 
     // Fetch matching address for the asset.
-    const data = await fetch(
-        `https://cardano-mainnet.blockfrost.io/api/v0/addresses/${address}`,
-        {
-            headers: {
-                // Your Blockfrost API key
-                project_id: process.env.NEXT_PUBLIC_BLOCKFROST,
-                'Content-Type': 'application/json'
-            }
-        }
-    ).then(res => res.json());
-
-    if (data?.error) {
-        // Handle error.
-        console.log("handle error")
-    }
-
-    const amount = data['amount']
-    var handles = []
     try {
-        amount.map((asset : any) => {
-            if(asset.unit.startsWith(policyID)){
-                let handle = '$'+Buffer.from(asset.unit.replace(policyID, ''), 'hex').toString()
+
+        const data = await fetch(
+            `https://cardano-mainnet.blockfrost.io/api/v0/addresses/${address}`,
+            {
+                headers: {
+                    // Your Blockfrost API key
+                    project_id: process.env.NEXT_PUBLIC_BLOCKFROST,
+                    'Content-Type': 'application/json'
+                }
+            }
+        ).then(res => res.json());
+        console.log(data)
+        if (data?.error) {
+            // Handle error.
+            console.log("handle error")
+        }
+
+        const amount = data['amount']
+        var handles = []
+        amount.map((asset: any) => {
+            if (asset.unit.startsWith(policyID)) {
+                let handle = '$' + Buffer.from(asset.unit.replace(policyID, ''), 'hex').toString()
                 handles.push(handle)
             }
         })
     } catch (e) {
-        console.log("error:",data)
+        console.log("error:", e)
     }
-    
+
     return (handles)
 }

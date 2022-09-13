@@ -8,6 +8,8 @@ const WalletConnect = () => {
     const setWallet = useStoreActions(actions => actions.setWallet)
     const availableWallets = useStoreState(state => state.availableWallets)
     const setAvailableWallets = useStoreActions(actions => actions.setAvailableWallets)
+    const setSelectedPeerAssets = useStoreActions(actions => actions.setSelectedPeerAssets)
+    const setSelectedSelfAssets = useStoreActions(actions => actions.setSelectedSelfAssets)
 
     const [connectedAddress, setConnectedAddress] = useState("")
 
@@ -25,6 +27,8 @@ const WalletConnect = () => {
     }
     
     const loadWalletSession = async () => {
+        setSelectedPeerAssets([])
+        setSelectedSelfAssets([])
         if (walletStore.connected &&
             walletStore.name &&
             window.cardano &&
