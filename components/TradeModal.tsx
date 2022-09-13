@@ -67,28 +67,32 @@ const TradeModal = (props) => {
                 .payToAddress(peerAddressInfo.address, { ...formatAssets(selectedSelfAssets), 'lovelace': BigInt(Number(adaOffer) * 1000000) })
             // .complete();
 
+            console.log(tx.txBuilder)
             const utxosSelf = await tx.lucid.wallet.getUtxosCore();
             var utxosPeer = await lucid.utxosAt(peerAddressInfo.address);
             const corePeerUtxos = C.TransactionUnspentOutputs.new();
             utxosPeer.forEach((utxo) => {
                 corePeerUtxos.add(utxoToCore(utxo));
             });
-
+            console.log(utxosSelf.get(0).output().to_json())
+            console.log(walletStore.address)
             tx.txBuilder.add_inputs_from(utxosSelf, C.Address.from_bech32(walletStore.address));
-            //adding outputs to receive from the peer
-            const output = C.TransactionOutput.new(
-                C.Address.from_bech32(walletStore.address),
-                assetsToValue({ ...formatAssets(selectedPeerAssets) }),
-            );
             tx.txBuilder.balance(C.Address.from_bech32(walletStore.address))
+            console.log("added inpiutsx")
 
-            console.log({ ...formatAssets(selectedPeerAssets) })
-            console.log(output.to_json())
+            if (selectedPeerAssets.length != 0) {
+                const output = C.TransactionOutput.new(
+                    C.Address.from_bech32(walletStore.address),
+                    assetsToValue({ ...formatAssets(selectedPeerAssets) }),
+                );
+                    console.log(output.to_json())
+                tx.txBuilder.add_output(output)
 
-            tx.txBuilder.add_output(output)
-            tx.txBuilder.add_inputs_from(corePeerUtxos, C.Address.from_bech32(peerAddressInfo.address));
-            tx.txBuilder.balance(C.Address.from_bech32(peerAddressInfo.address))
-            console.log("inpiuts added")
+                tx.txBuilder.add_inputs_from(corePeerUtxos, C.Address.from_bech32(peerAddressInfo.address));
+                console.log("inpiuts added")
+
+                tx.txBuilder.balance(C.Address.from_bech32(peerAddressInfo.address))
+            }
 
             const txComplete = new TxComplete(
                 lucid,

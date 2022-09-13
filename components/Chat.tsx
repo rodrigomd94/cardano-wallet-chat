@@ -131,6 +131,8 @@ const Chat = (props) => {
                 const pubkeyHash = C.PublicKey.from_bech32(vkey).hash().to_hex()
                 const addrKeyHash = C.Address.from_bech32(address).as_base().payment_cred().to_keyhash().to_hex()
                 isValid = pubkeyHash === addrKeyHash
+               // console.log(isValid, JSON.parse(transaction.witness_set().to_json()))
+
             } catch (err) {
                 isValid = false
                 // console.log(err)
