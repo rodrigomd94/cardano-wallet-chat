@@ -17,9 +17,10 @@ const NftCard = (props) => {
         console.log(selectedPeerAssets)
         if (selected) {
             if (props.type === "own") {
-                setSelectedSelfAssets(selectedSelfAssets.filter((asset) => asset.meta.assetId != props.meta.assetId))
+                setSelectedSelfAssets(selectedSelfAssets.filter((asset) => asset.assetId != props.meta.assetId))
             } else {
-                setSelectedPeerAssets(selectedPeerAssets.filter((asset) => asset.meta.assetId != props.meta.assetId))
+                console.log(selectedPeerAssets)
+                setSelectedPeerAssets(selectedPeerAssets.filter((asset) => asset.assetId != props.meta.assetId))
             }
         } else {
             if (props.type === "own") {

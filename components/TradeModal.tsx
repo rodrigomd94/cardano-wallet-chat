@@ -29,7 +29,7 @@ const TradeModal = (props) => {
     const [lucid, setLucid] = useState(undefined)
     const [ownNfts, setOwnNfts] = useState([])
     const [peerNfts, setPeerNfts] = useState([])
-    const [selectedTab, setSelectedTab] = useState("peer")
+    const [selectedTab, setSelectedTab] = useState("own")
     const [adaOffer, setAdaOffer] = useState(0)
 
 
@@ -55,49 +55,58 @@ const TradeModal = (props) => {
         return formattedAssets
     }
 
-   
+
 
     const makeOffer = async () => {
-        const tx = await lucid.newTx()
-            .addSigner(walletStore.address)
-            .addSigner(peerAddressInfo.address)
-            //.validTo(Date.now() + 432000000)
-           // .payToAddress(walletStore.address,  { ...formatAssets(selectedPeerAssets), 'lovelace': BigInt(1900000) })
-            .payToAddress(peerAddressInfo.address, { ...formatAssets(selectedSelfAssets), 'lovelace': BigInt(Number(adaOffer) * 1000000) })
-        // .complete();
+        try {
+            const tx = await lucid.newTx()
+                .addSigner(walletStore.address)
+                .addSigner(peerAddressInfo.address)
+                //.validTo(Date.now() + 432000000)
+                // .payToAddress(walletStore.address,  { ...formatAssets(selectedPeerAssets), 'lovelace': BigInt(1900000) })
+                .payToAddress(peerAddressInfo.address, { ...formatAssets(selectedSelfAssets), 'lovelace': BigInt(Number(adaOffer) * 1000000) })
+            // .complete();
 
+            const utxosSelf = await tx.lucid.wallet.getUtxosCore();
+            var utxosPeer = await lucid.utxosAt(peerAddressInfo.address);
+            const corePeerUtxos = C.TransactionUnspentOutputs.new();
+            utxosPeer.forEach((utxo) => {
+                corePeerUtxos.add(utxoToCore(utxo));
+            });
 
-        //adding outputs to receive from the peer
-        const output = C.TransactionOutput.new(
-            C.Address.from_bech32(walletStore.address),
-            assetsToValue({ ...formatAssets(selectedPeerAssets), 'lovelace': BigInt(1900000) }),
-        );
+            tx.txBuilder.add_inputs_from(utxosSelf, C.Address.from_bech32(walletStore.address));
+            //adding outputs to receive from the peer
+            const output = C.TransactionOutput.new(
+                C.Address.from_bech32(walletStore.address),
+                assetsToValue({ ...formatAssets(selectedPeerAssets) }),
+            );
+            tx.txBuilder.balance(C.Address.from_bech32(walletStore.address))
 
-        const utxosSelf = await tx.lucid.wallet.getUtxosCore();
-        var utxosPeer = await lucid.utxosAt(peerAddressInfo.address);
-        const corePeerUtxos = C.TransactionUnspentOutputs.new();
-        utxosPeer.forEach((utxo) => {
-            corePeerUtxos.add(utxoToCore(utxo));
-        });
+            console.log({ ...formatAssets(selectedPeerAssets) })
+            console.log(output.to_json())
 
-        tx.txBuilder.add_inputs_from(utxosSelf, C.Address.from_bech32(walletStore.address));
-        tx.txBuilder.add_output(output)
-        tx.txBuilder.add_inputs_from(corePeerUtxos, C.Address.from_bech32(peerAddressInfo.address));
+            tx.txBuilder.add_output(output)
+            tx.txBuilder.add_inputs_from(corePeerUtxos, C.Address.from_bech32(peerAddressInfo.address));
+            tx.txBuilder.balance(C.Address.from_bech32(peerAddressInfo.address))
+            console.log("inpiuts added")
 
-        tx.txBuilder.balance(C.Address.from_bech32(walletStore.address))
-
-        const txComplete = new TxComplete(
-            lucid,
-            await tx.txBuilder.construct(utxosSelf, C.Address.from_bech32(walletStore.address)),
-          );
-        //const signedTx = await txComplete.partialSign()
-        const signedTx = await txComplete.sign().complete()
-        const index = new Date().toISOString()
-        db.get('chat3')
-            .get(walletStore.address)
-            .get(peerAddressInfo.address)
-            .get(index)
-         .put({ message: signedTx.toString(), unsignedTx: tx.toString(), tx: true })
+            const txComplete = new TxComplete(
+                lucid,
+                await tx.txBuilder.construct(utxosSelf, C.Address.from_bech32(walletStore.address)),
+            );
+            console.log(txComplete.toObject())
+            //const signedTx = await txComplete.partialSign()
+            const signedTx = await txComplete.sign().complete()
+            const index = new Date().toISOString()
+            db.get('chat3')
+                .get(walletStore.address)
+                .get(peerAddressInfo.address)
+                .get(index)
+                .put({ message: signedTx.toString(), unsignedTx: tx.toString(), tx: true })
+        }
+        catch (err) {
+            window.alert(err)
+        }
     }
 
     useEffect(() => {

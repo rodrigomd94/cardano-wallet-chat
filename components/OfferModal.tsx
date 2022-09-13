@@ -29,7 +29,7 @@ const OfferModal = (props) => {
     const [lucid, setLucid] = useState(undefined)
     const [ownNfts, setOwnNfts] = useState([])
     const [peerNfts, setPeerNfts] = useState([])
-    const [selectedTab, setSelectedTab] = useState("peer")
+    const [selectedTab, setSelectedTab] = useState("own")
     const [adaOffer, setAdaOffer] = useState(0)
 
 
@@ -89,18 +89,18 @@ const OfferModal = (props) => {
 
             <label htmlFor="my-modal" className="btn modal-button px-10 btn-secondary">Request Trade</label>
 
-            <input type="checkbox" id="my-modal" className="modal-toggle" />
+            <input type="checkbox" id="my-modalaaa" className="modal-toggle" />
             <div className="modal">
                 <div className="modal-box">
-                    <label htmlFor="my-modal" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
+                    <label htmlFor="my-modalaaa" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
                     <h3 className="font-bold text-lg">Make an offer</h3>
                     {/* <p className="py-4">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
                     <div className="modal-action">
                         <label htmlFor="my-modal" className="btn">Yay!</label>
                     </div> */}
                     <div className="tabs tabs-boxed">
-                        <a onClick={() => { setSelectedTab("peer") }} className={`tab ${selectedTab === "peer" ? "tab-active" : ""}`}>Peer</a>
                         <a onClick={() => { setSelectedTab("own") }} className={`tab ${selectedTab === "own" ? "tab-active" : ""}`}>Me</a>
+                        <a onClick={() => { setSelectedTab("peer") }} className={`tab ${selectedTab === "peer" ? "tab-active" : ""}`}>Peer</a>
                     </div>
                     {
                         selectedTab === "own" &&
