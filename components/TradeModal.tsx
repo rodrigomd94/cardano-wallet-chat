@@ -62,42 +62,34 @@ const TradeModal = (props) => {
             const tx = await lucid.newTx()
                 .addSigner(walletStore.address)
                 .addSigner(peerAddressInfo.address)
-                //.validTo(Date.now() + 432000000)
-                // .payToAddress(walletStore.address,  { ...formatAssets(selectedPeerAssets), 'lovelace': BigInt(1900000) })
-                .payToAddress(peerAddressInfo.address, { ...formatAssets(selectedSelfAssets), 'lovelace': BigInt(Number(adaOffer) * 1000000) })
-            // .complete();
+            //.validTo(Date.now() + 432000000)
 
-            console.log(tx.txBuilder)
-            const utxosSelf = await tx.lucid.wallet.getUtxosCore();
             var utxosPeer = await lucid.utxosAt(peerAddressInfo.address);
             const corePeerUtxos = C.TransactionUnspentOutputs.new();
             utxosPeer.forEach((utxo) => {
                 corePeerUtxos.add(utxoToCore(utxo));
             });
-            console.log(utxosSelf.get(0).output().to_json())
-            console.log(walletStore.address)
-            tx.txBuilder.add_inputs_from(utxosSelf, C.Address.from_bech32(walletStore.address));
-            tx.txBuilder.balance(C.Address.from_bech32(walletStore.address))
-            console.log("added inpiutsx")
-
-            if (selectedPeerAssets.length != 0) {
-                const output = C.TransactionOutput.new(
-                    C.Address.from_bech32(walletStore.address),
-                    assetsToValue({ ...formatAssets(selectedPeerAssets) }),
-                );
-                    console.log(output.to_json())
-                tx.txBuilder.add_output(output)
-
-                tx.txBuilder.add_inputs_from(corePeerUtxos, C.Address.from_bech32(peerAddressInfo.address));
-                console.log("inpiuts added")
- 
-                tx.txBuilder.balance(C.Address.from_bech32(peerAddressInfo.address))
-            }
-
-            const txComplete = new TxComplete(
-                lucid,
-                await tx.txBuilder.construct(utxosSelf, C.Address.from_bech32(walletStore.address)),
+            /* const output = C.TransactionOutput.new(
+                C.Address.from_bech32(walletStore.address),
+                assetsToValue({ ...formatAssets(selectedPeerAssets) }),
             );
+            console.log(output.to_json())
+            tx.txBuilder.add_output(output) */
+            tx.payToAddress(walletStore.address, { ...formatAssets(selectedPeerAssets) })
+
+            tx.txBuilder.add_inputs_from(corePeerUtxos, C.Address.from_bech32(peerAddressInfo.address));
+            console.log("inputs added")
+            tx.txBuilder.balance(C.Address.from_bech32(peerAddressInfo.address))
+
+            tx.payToAddress(peerAddressInfo.address, { ...formatAssets(selectedSelfAssets) })
+
+            if (adaOffer > 0) {
+                tx.payToAddress(peerAddressInfo.address, { 'lovelace': BigInt(Number(adaOffer) * 1000000) })
+              /*   tx.txBuilder.add_inputs_from(utxosSelf, C.Address.from_bech32(walletStore.address));
+                tx.txBuilder.balance(C.Address.from_bech32(walletStore.address)) */
+            }
+            const txComplete =await tx.complete()
+            console.log("added inputs")
             console.log(txComplete.toObject())
             //const signedTx = await txComplete.partialSign()
             const signedTx = await txComplete.sign().complete()
