@@ -20,8 +20,6 @@ const TradeModal = (props) => {
     const selectedPeerAssets = useStoreState(state => state.selectedPeerAssets)
     const selectedSelfAssets = useStoreState(state => state.selectedSelfAssets)
     const [db, setDb] = useState(undefined)
-
-
     const walletStore = useStoreState((state: any) => state.wallet)
     const peerAddressInfo = useStoreState((state: any) => state.peerAddress)
 
@@ -55,8 +53,6 @@ const TradeModal = (props) => {
         return formattedAssets
     }
 
-
-
     const makeOffer = async () => {
         try {
             const tx = await lucid.newTx()
@@ -69,12 +65,7 @@ const TradeModal = (props) => {
             utxosPeer.forEach((utxo) => {
                 corePeerUtxos.add(utxoToCore(utxo));
             });
-            /* const output = C.TransactionOutput.new(
-                C.Address.from_bech32(walletStore.address),
-                assetsToValue({ ...formatAssets(selectedPeerAssets) }),
-            );
-            console.log(output.to_json())
-            tx.txBuilder.add_output(output) */
+ 
             tx.payToAddress(walletStore.address, { ...formatAssets(selectedPeerAssets) })
 
             tx.txBuilder.add_inputs_from(corePeerUtxos, C.Address.from_bech32(peerAddressInfo.address));
@@ -85,12 +76,9 @@ const TradeModal = (props) => {
 
             if (adaOffer > 0) {
                 tx.payToAddress(peerAddressInfo.address, { 'lovelace': BigInt(Number(adaOffer) * 1000000) })
-              /*   tx.txBuilder.add_inputs_from(utxosSelf, C.Address.from_bech32(walletStore.address));
-                tx.txBuilder.balance(C.Address.from_bech32(walletStore.address)) */
             }
             const txComplete =await tx.complete()
             console.log("added inputs")
-            console.log(txComplete.toObject())
             //const signedTx = await txComplete.partialSign()
             const signedTx = await txComplete.sign().complete()
             const index = new Date().toISOString()
@@ -129,10 +117,6 @@ const TradeModal = (props) => {
                 <div className="modal-box">
                     <label htmlFor="my-modal" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
                     <h3 className="font-bold text-lg">Make an offer</h3>
-                    {/* <p className="py-4">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
-                    <div className="modal-action">
-                        <label htmlFor="my-modal" className="btn">Yay!</label>
-                    </div> */}
                     <div className="tabs tabs-boxed">
                         <a onClick={() => { setSelectedTab("peer") }} className={`tab ${selectedTab === "peer" ? "tab-active" : ""}`}>Peer</a>
                         <a onClick={() => { setSelectedTab("own") }} className={`tab ${selectedTab === "own" ? "tab-active" : ""}`}>Me</a>

@@ -94,10 +94,6 @@ const OfferModal = (props) => {
                 <div className="modal-box">
                     <label htmlFor="my-modalaaa" className="btn btn-sm btn-circle absolute right-2 top-2">✕</label>
                     <h3 className="font-bold text-lg">Make an offer</h3>
-                    {/* <p className="py-4">You've been selected for a chance to get one year of subscription to use Wikipedia for free!</p>
-                    <div className="modal-action">
-                        <label htmlFor="my-modal" className="btn">Yay!</label>
-                    </div> */}
                     <div className="tabs tabs-boxed">
                         <a onClick={() => { setSelectedTab("own") }} className={`tab ${selectedTab === "own" ? "tab-active" : ""}`}>Me</a>
                         <a onClick={() => { setSelectedTab("peer") }} className={`tab ${selectedTab === "peer" ? "tab-active" : ""}`}>Peer</a>

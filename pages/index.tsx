@@ -13,22 +13,6 @@ import Link from 'next/link'
 const Home: NextPage = () => {
   const walletStore = useStoreState((state: any) => state.wallet)
 
-  /*   useEffect(() => {
-      if (lucid) {
-        const address = lucid.wallet.address()
-          .then((address: string) => {
-            console.log(address)
-            const payload = utf8ToHex("Hello from Lucid!");
-            lucid.newMessage(address, payload).sign()
-              .then((signedMessage => {
-                const hasSigned: boolean = lucid.verifyMessage(address, payload, signedMessage);
-                console.log(hasSigned);
-              }))
-          })
-      } else {
-        initLucid()
-      }
-    }, [lucid]) */
   useEffect(() => {
     console.log(walletStore)
   }, [])
