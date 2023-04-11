@@ -92,7 +92,7 @@ const Chat = (props) => {
                 })
 
         } else if (lucid && peer) {
-            setDb(GUN(["https://gun-server-1.glitch.me/gun"]))
+            setDb(GUN(["https://adao-gun.glitch.me/gun"]))
         }
     }, [db, walletStore.address, lucid, peerAddress])
 
